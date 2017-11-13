@@ -1,6 +1,7 @@
 # wnhgdemo
 
 > A Vue.js project
+###用户名 15757135989 密码 123456
 
 ## Build Setup
 
@@ -8,7 +9,7 @@
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
+# serve with hot reload at localhost:8888
 npm run dev
 
 # build for production with minification

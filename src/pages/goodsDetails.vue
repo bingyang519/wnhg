@@ -275,7 +275,7 @@ export default {
   mounted() {
     this.getData();
     console.log(this.$route.meta.keepAlive)
-    this.$route.meta.keepAlive=true
+    // this.$route.meta.keepAlive=true
   },
   beforeRouteLeave(to, from, next){
       console.log(to)

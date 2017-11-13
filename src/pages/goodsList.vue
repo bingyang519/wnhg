@@ -30,10 +30,12 @@
         infinite-scroll-distance="100">
           <ul>
               <li v-for="item in list">
-                  <img v-lazy="item.imgUrl" alt="">
-                  <p>{{item.goodsName}}</p>
-                  <span>￥{{item.mallPrice}}</span>
-                  <del>￥{{item.marketPrice}}</del>
+                  <router-link :to="{name:'goodsDetails',query:{goodsNo:item.goodsNo}}">
+                    <img v-lazy="item.imgUrl" alt="">
+                    <p>{{item.goodsName}}</p>
+                    <span>￥{{item.mallPrice}}</span>
+                    <del>￥{{item.marketPrice}}</del>
+                  </router-link>
               </li>
           </ul>
       </div>
