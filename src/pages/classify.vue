@@ -28,14 +28,18 @@
       </div>
 	  <div class="foot_height"></div>
       <foot></foot>
+      <loading :isShow='loadingIsShow'></loading>
   </div>
 </template>
 <script>
 import foot from "@/components/foot";
+import loading from "@/components/loading";
 export default {
   name: "classify",
   data() {
     return {
+      loadingIsShow: false,
+      isFirstEnter: true,
       oneClassList: [],
       twoClassList: [],
       selId: null,
@@ -43,7 +47,8 @@ export default {
     };
   },
   components: {
-    foot
+    foot,
+    loading
   },
   methods: {
     getOneClassData() {
@@ -55,10 +60,12 @@ export default {
       });
     },
     getTwoClassData(d) {
+      this.loadingIsShow = true;
       this.$http.post(this.API.getCategoryTwo, `categoryId=${d}`).then(res => {
         if (res.data.message) {
           this.twoClassList = res.data.classTwoList;
           this.total[d] = res.data.classTwoList;
+          this.loadingIsShow = false;
         }
       });
     },
@@ -71,18 +78,25 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getOneClassData();
+  created() {
+    this.isFirstEnter = true;
   },
+  mounted() {},
   activated() {
-    console.log(1111111);
-    this.$nextTick(()=>{
-        console.log(2333)
-    })
+    if (!this.$route.meta.isKeepAlive || this.isFirstEnter) {
+      console.log("我是classify的activated方法");
+      this.getOneClassData();
+    }
+    this.$route.meta.isKeepAlive = false;
+    this.isFirstEnter = false;
   },
-  deactivated () {
-	  console.log(22222)
-  }
+  beforeRouteEnter(to, from, next) {
+    if (from.name == "goodsList") {
+      to.meta.isKeepAlive = true;
+    }
+    next();
+  },
+  deactivated() {}
 };
 </script>
 <style scoped>

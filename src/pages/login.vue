@@ -1,5 +1,6 @@
 <template>
   <div class="login">
+      <top text='登陆'></top>
       <div class="text">
           账号：<input type="text" v-model="mobile">
       </div>
@@ -7,12 +8,17 @@
           密码：<input type="password" v-model="paddword">
       </div>
       <div class="err">{{err}}</div>
+      <div class="btn">
+        <button>填入账号</button>
+        <button>填入密码</button>
+      </div>
       <button @click.prevent="login">登陆</button>
-      <button @click.prevent="ddd">ddd</button>
+      <div>用户名 15757135989 密码 123456</div>
   </div>
 </template>
 <script>
 import hex_md5 from '../assets/js/md5'
+import top from '@/components/top'
 export default {
     name:'login',
     data(){
@@ -21,6 +27,9 @@ export default {
             paddword:'',
             err:'',
         }
+    },
+    components:{
+        top
     },
     computed:{
         pwd(){
@@ -46,9 +55,6 @@ export default {
                 console.log(err,222)
             })
         },
-        ddd(){
-            alert(this.isLogin)
-        }
     }
 }
 </script>

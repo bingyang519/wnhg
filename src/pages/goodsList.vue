@@ -48,6 +48,7 @@ export default {
   name:'goodsList',
   data(){
       return {
+          isFirstEnter:true,
           threeCategory:null,
           pageNum:1,
           name:'',
@@ -101,13 +102,38 @@ export default {
       }
   },
   created(){
-      this.threeCategory=this.$route.query.threeCategory
-      this.getData();
-
+      this.isFirstEnter=true;
   },
   mounted(){
-
-  }
+      
+  },
+  activated() {
+      if(!this.$route.meta.isKeepAlive || this.isFirstEnter){
+          console.log('我是goodList的activated方法')
+        this.threeCategory=null,
+        this.pageNum=1,
+        this.name='',
+        this.sort='',
+        this.order='',
+        this.brandld='',
+        this.list=[],
+        this.pages=1,
+        this.busy=false,
+        this.loading=false,
+        this.threeCategory=this.$route.query.threeCategory
+        this.getData();
+      }
+      this.$route.meta.isKeepAlive=false;
+      this.isFirstEnter=false;
+    
+  },
+  beforeRouteEnter(to,from,next){
+      if(from.name=='goodsDetails'){
+          to.meta.isKeepAlive=true
+      }
+      next()
+  },
+ 
 }
 </script>
 <style scoped>

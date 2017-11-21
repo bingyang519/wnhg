@@ -13,12 +13,14 @@ Vue.use(Router)
 
 
 export default new Router({
+  mode:'history',
   routes: [{
     path: '/',
     name: 'index',
     component: Index,
     meta:{
         keepAlive:true,
+        isKeepAlive:false,
     }
   }, {
     path: '/goodsDetails',
@@ -26,6 +28,7 @@ export default new Router({
     component: goodsDetails,
     meta:{
         keepAlive:true,
+        isKeepAlive:false,
     }
   },{
     path:'/login',
@@ -42,10 +45,25 @@ export default new Router({
   },{
       path:'/classify',
       name:'classify',
-      component:classify
+      component:classify,
+      meta:{
+          keepAlive:true,
+          isKeepAlive:false,
+      }
   },{
       path:'/goodsList',
       name:'goodsList',
-      component:goodsList
-  }]
+      component:goodsList,
+      meta:{
+          keepAlive:true,
+          isKeepAlive:false,
+      }
+  }],
+  scrollBehavior (to, from, savedPosition) {
+      if(savedPosition){
+          return savedPosition;
+      }else{
+          return {x:0,y:0}
+      }
+  }
 })

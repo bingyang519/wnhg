@@ -17,7 +17,12 @@ exports.cssLoaders = function (options) {
     loader: 'css-loader',
     options: {
       minimize: process.env.NODE_ENV === 'production',
-      sourceMap: options.sourceMap
+      sourceMap: options.sourceMap,
+      //importLoaders: 2 //在css-loader前应用的loader的数目, 默认为0。
+    // 如果不加这个，@import的外部css文件将不能正常转换。
+    // 如若还不行，试着调大数字。
+    // 记住：更改后，必须重启项目，否则不生效！！！  
+      
     }
   }
   const px2remLoader={

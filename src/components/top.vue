@@ -2,8 +2,8 @@
   <div class="top">
       <span @click="back">返回</span>
       {{text}}
-      <span>首页</span>
-  </div>
+      <router-link :to='{name:"index"}' tag="span">首页</router-link>
+  </div> 
 </template>
 <script>
 export default {

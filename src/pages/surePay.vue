@@ -104,7 +104,7 @@ export default {
   beforeRouteLeave(to, from, next){
       console.log(to)
       if(to.name=='goodsDetails'){
-          to.meta.keepAlive=true
+        //   to.meta.keepAlive=true
       }
       next()
   }

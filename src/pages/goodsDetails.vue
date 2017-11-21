@@ -1,7 +1,7 @@
 <template>
   <div class="goodDetail">
     <top text='详情页'></top>
-    <swiper :list="imgShowList" class="swiper1"></swiper>
+    <swiper :list="imgShowList" class="swiper1" v-if="imgShowList.length>0"></swiper>
     <div class="tit">
       <p>{{goodsDetail.goodsName2}}</p>
       <div class="price">￥{{minPrice}} ~ {{maxPrice}}</div>
@@ -49,7 +49,7 @@
 		<img :src="goodsDetail.brandLogo" alt="">
 		<a href="">查看该品牌所有的单品</a>
 	</div>
-	<div class="detailImg">
+	<div class="detailImg" v-if="imgList.length>0">
 		<p>图文详情</p>
 		<img v-for="item in imgList" v-lazy="item.imgUrl" alt="">
 	</div>
@@ -108,7 +108,7 @@
             </div>
         </div>
         <div 
-            :class="['btn',{none:realStock==0 || (count==0 && skuId!=0)}]"
+            :class="['btn',{none:count<=0 && skuId!=0}]"
             @click="btnClick"
         >
             确定
@@ -119,6 +119,7 @@
         :text='layerText'
         @layerHide='layerIsShow=false' 
     ></layer>
+    <loading :isShow='loadingIsShow'></loading>
   </div>
 </template>
 <script>
@@ -126,29 +127,33 @@ import swiper from "@/components/swiper";
 import slider from "@/components/slider";
 import layer from "@/components/layer";
 import top from "@/components/top";
-import commonMethods from '@/assets/js/common';
+import commonMethods from "@/assets/js/common";
+import loading from "../components/loading";
 export default {
   name: "goodsDetails",
   data() {
     return {
+      loadingIsShow: false,
+      isFirstEnter: true,
+      isKeepAlive: false,
       goodsNo: "",
       imgShowList: [],
       goodsDetail: {},
       imgList: [],
-      detailList:[],
-	  specificationIsShow: false,
-	  buyIsShow:false,
+      detailList: [],
+      specificationIsShow: false,
+      buyIsShow: false,
       post: {},
-      realStock:0,
-      count:0,
-      detailImg:'',
-      detailSel:'',
-      getIntervalPrice:[],
-      hasSel:false,
-      buyNum:1,
-      skuId:0,
-      layerIsShow:false,
-      layerText:''
+      realStock: 0,
+      count: 0,
+      detailImg: "",
+      detailSel: "",
+      getIntervalPrice: [],
+      hasSel: false,
+      buyNum: 1,
+      skuId: 0,
+      layerIsShow: false,
+      layerText: ""
     };
   },
   components: {
@@ -156,6 +161,7 @@ export default {
     slider,
     layer,
     top,
+    loading
   },
   computed: {
     minPrice() {
@@ -170,6 +176,7 @@ export default {
   },
   methods: {
     getData() {
+      this.loadingIsShow = true;
       this.$http
         .post(this.API.detailMo, "goodsNo=" + this.goodsNo)
         .then(res => {
@@ -178,9 +185,10 @@ export default {
           this.goodsDetail = res.data.goodsDetail;
           this.imgList = res.data.imgList;
           this.post = res.data.post;
-          this.detailList=res.data.detailList
-          this.detailImg=res.data.goodsDetail.imgUrl2
-          this.realStock=res.data.goodsDetail.realStock
+          this.detailList = res.data.detailList;
+          this.detailImg = res.data.goodsDetail.imgUrl2;
+          this.realStock = res.data.goodsDetail.realStock;
+          this.loadingIsShow = false;
         });
     },
     specificationClick() {
@@ -190,121 +198,122 @@ export default {
       this.specificationIsShow = false;
     },
     buy() {
-		this.$http.post(this.API.checkUser)
-			.then((res)=>{
-				if(res.data.success){
-					this.buyIsShow=true;
-				}else{
-					this.$router.push({name:'login'})
-				}
-			})
-	},
-	buyHide(){
-		this.buyIsShow=false;
-    },
-    getPrice(skuLd,index){
-        this.detailSel=this.detailList[index].skuName
-        this.count=this.detailList[index].count
-        this.detailImg=this.detailList[index].imgUrl2
-        this.skuId=skuLd
-        this.hasSel=true
-        this.buyNum=1
-        this.$http.post(this.API.getIntervalPrice,`skuId=${skuLd}`).
-        then((res)=>{
-            if(res.data.success){
-                this.getIntervalPrice=res.data.result
-            }
-        })
-    },
-    cut(){
-        if(this.buyNum>1){
-            this.buyNum--
+      this.$http.post(this.API.checkUser).then(res => {
+        if (res.data.success) {
+          this.buyIsShow = true;
+        } else {
+          this.$router.push({ name: "login" });
         }
+      });
     },
-    add(){
-        if(this.skuId==0){
-            if(this.buyNum<this.realStock){
-                this.buyNum++
-            }
-        }else{
-            if(this.buyNum<this.count){
-                this.buyNum++
-            }
-        }
+    buyHide() {
+      this.buyIsShow = false;
     },
-    numKeyUp(){
-        this.buyNum=this.buyNum.replace(/\D/g,'')
+    getPrice(skuLd, index) {
+      this.detailSel = this.detailList[index].skuName;
+      this.count = this.detailList[index].count;
+      this.detailImg = this.detailList[index].imgUrl2;
+      this.skuId = skuLd;
+      this.hasSel = true;
+      this.buyNum = 1;
+      this.$http.post(this.API.getIntervalPrice, `skuId=${skuLd}`).then(res => {
+        if (res.data.success) {
+          this.getIntervalPrice = res.data.result;
+        }
+      });
     },
-    numBlur(){
-        console.log(this.buyNum)
-        if(this.skuId==0){
-            if(this.buyNum>this.realStock){
-                this.buyNum=1
-            }
-        }else{
-            if(this.buyNum>this.count){
-                this.buyNum=1
-            }
-        }
-        if(this.buyNum==0){
-            this.buyNum=1
-        }
+    cut() {
+      if (this.buyNum > 1) {
+        this.buyNum--;
+      }
     },
-    btnClick(){
-        if(this.realStock==0 || (this.skuId!=0 && this.count==0)){
-            return false;
+    add() {
+      if (this.skuId == 0) {
+        if (this.buyNum < this.realStock) {
+          this.buyNum++;
         }
-        if(this.detailList.length>0 && !this.detailSel){
-            this.layerText='请选择规格'
-            this.layerIsShow=true
-            return false;
+      } else {
+        if (this.buyNum < this.count) {
+          this.buyNum++;
         }
-        //跳转到支付页面
-        commonMethods.setCookie('PALACE_ORDER_SKUNO', this.skuId);
-        commonMethods.setCookie('PALACE_ORDER_NUMS', this.buyNum);
-        commonMethods.setCookie('PALACE_ORDER_COUPONID', "");
-        commonMethods.setCookie('PALACE_ORDER_ADDRESS', "");
-        commonMethods.setCookie('fromShop', 0);
-        this.$router.push({name:'surePay'})
+      }
+    },
+    numKeyUp() {
+      this.buyNum = this.buyNum.replace(/\D/g, "");
+    },
+    numBlur() {
+      console.log(this.buyNum);
+      if (this.skuId == 0) {
+        if (this.buyNum > this.realStock) {
+          this.buyNum = 1;
+        }
+      } else {
+        if (this.buyNum > this.count) {
+          this.buyNum = 1;
+        }
+      }
+      if (this.buyNum == 0) {
+        this.buyNum = 1;
+      }
+    },
+    btnClick() {
+      if (this.skuId != 0 && this.count <= 0) {
+        return false;
+      }
+      if (this.detailList.length > 0 && !this.detailSel) {
+        this.layerText = "请选择规格";
+        this.layerIsShow = true;
+        return false;
+      }
+      //跳转到支付页面
+      commonMethods.setCookie("PALACE_ORDER_SKUNO", this.skuId);
+      commonMethods.setCookie("PALACE_ORDER_NUMS", this.buyNum);
+      commonMethods.setCookie("PALACE_ORDER_COUPONID", "");
+      commonMethods.setCookie("PALACE_ORDER_ADDRESS", "");
+      commonMethods.setCookie("fromShop", 0);
+      this.buyHide();
+      this.$router.push({ name: "surePay" });
     }
   },
   created() {
-    this.goodsNo = this.$route.query.goodsNo;
-    console.log('我是goodsDetail中的created方法')
+    console.log("我是goodsDetail中的created方法");
+    this.isFirstEnter = true;
   },
-  mounted() {
-    this.getData();
-    console.log(this.$route.meta.keepAlive)
-    // this.$route.meta.keepAlive=true
+  mounted() {},
+  activated() {
+    if (!this.$route.meta.isKeepAlive || this.isFirstEnter) {
+      this.imgShowList = [];
+      this.goodsDetail = {};
+      this.imgList = [];
+      this.detailList = [];
+      this.goodsNo = this.$route.query.goodsNo;
+      this.getData();
+    }
+    this.$route.meta.isKeepAlive = false;
+    this.isFirstEnter = false;
   },
-  beforeRouteLeave(to, from, next){
-      console.log(to)
-      if(to.name=='index'){
-          to.meta.keepAlive=true
-      }
-    //   if(to.name=='surePay'){
-    //       from.meta.keepAlive=true;
-    //   }
-      next()
+  beforeRouteEnter(to, from, next) {
+    if (from.name == "surePay") {
+      to.meta.isKeepAlive = true;
+    }
+    next();
   },
-  beforeRouteEnter(to, from, next){
-    //   to.meta.keepAlive=true
-    //   console.log(to,1111)
-      next()
+  deactivated(){
+      this.buyHide();
   }
 };
 </script>
 <style scoped>
 .price-enter-active,
-.price-leave-active{
-    transition: all .5s ease;
+.price-leave-active {
+  transition: all 0.5s ease;
 }
 .price-enter,
-.price-leave-to{
-    opacity: 0;
+.price-leave-to {
+  opacity: 0;
 }
-.swiper1{
-    margin-top: 100px;
+.swiper1 {
+  margin-top: 100px;
 }
 .tit {
   background: #fff;
@@ -313,18 +322,18 @@ export default {
   padding: 20px;
 }
 .tit p {
-  font-size: 30px;/*px*/
+  font-size: 30px; /*px*/
   color: #4d4d4d;
   padding: 0 20px;
   border-bottom: 2px solid #ededed;
 }
 .tit .price {
-  font-size: 28px;/*px*/
+  font-size: 28px; /*px*/
   color: #f45e48;
   padding: 10px 20px;
 }
 .tit .market {
-  font-size: 24px;/*px*/
+  font-size: 24px; /*px*/
   color: #adadad;
   padding: 0 20px;
 }
@@ -339,7 +348,7 @@ export default {
   padding: 20px 40px;
 }
 .specification p {
-  font-size: 30px;/*px*/
+  font-size: 30px; /*px*/
 }
 .specification div {
   width: 400px;
@@ -347,7 +356,7 @@ export default {
   flex-wrap: wrap;
 }
 .specification div span {
-  font-size: 28px;/*px*/
+  font-size: 28px; /*px*/
   display: block;
   margin-left: 20px;
 }
@@ -362,7 +371,7 @@ export default {
   vertical-align: middle;
 }
 .slide h5 {
-  font-size: 30px;/*px*/
+  font-size: 30px; /*px*/
   text-align: center;
   padding: 20px;
 }
@@ -373,7 +382,7 @@ export default {
   padding: 10px 20px;
 }
 .slide .ul li h6 {
-  font-size: 28px;/*px*/
+  font-size: 28px; /*px*/
 }
 .slide .ul li h6::before {
   content: "";
@@ -386,7 +395,7 @@ export default {
   transform: rotate(45deg);
 }
 .slide .ul li p {
-  font-size: 24px;/*px*/
+  font-size: 24px; /*px*/
 }
 .brand {
   margin-top: 20px;
@@ -394,11 +403,11 @@ export default {
 }
 .brand h6 {
   padding: 20px;
-  font-size: 30px;/*px*/
+  font-size: 30px; /*px*/
   text-align: center;
 }
 .brand p {
-  font-size: 24px;/*px*/
+  font-size: 24px; /*px*/
   line-height: 1.5;
   padding: 0 20px;
 }
@@ -409,7 +418,7 @@ export default {
   margin: 10px auto;
 }
 .brand a {
-  font-size: 28px;/*px*/
+  font-size: 28px; /*px*/
   text-align: center;
   display: block;
   padding-bottom: 10px;
@@ -420,7 +429,7 @@ export default {
   background: #fff;
 }
 .detailImg p {
-  font-size: 30px;/*px*/
+  font-size: 30px; /*px*/
   text-align: center;
   margin: 20px;
 }
@@ -449,124 +458,124 @@ export default {
 .footer .btn .bike {
   width: 50%;
   text-align: center;
-  font-size: 30px;/*px*/
+  font-size: 30px; /*px*/
 }
 .footer .btn .buy {
   width: 50%;
   background: red;
   text-align: center;
-  font-size: 30px;/*px*/
+  font-size: 30px; /*px*/
   color: #fff;
 }
-.sku_header{
-    display: flex;
-    border-bottom: 2px solid #eee;
-} 
-.sku_header .img{
-    width: 180px;
-    height: 180px;
-    overflow: hidden;
-    border: 2px solid #eee;
-    margin-left: 20px;
-    transform: translateY(-30px);
-    background: #fff;
+.sku_header {
+  display: flex;
+  border-bottom: 2px solid #eee;
 }
-.sku_header .img img{
-    display: block;
-    width: 100%;
+.sku_header .img {
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  border: 2px solid #eee;
+  margin-left: 20px;
+  transform: translateY(-30px);
+  background: #fff;
 }
-.sku_header .price{
-    margin-top: 20px;
-    margin-left: 30px;
-    width:500px;
+.sku_header .img img {
+  display: block;
+  width: 100%;
 }
-.sku_header .price .no_sel p{
-    font-size: 30px;/*px*/
-    color: red;
+.sku_header .price {
+  margin-top: 20px;
+  margin-left: 30px;
+  width: 500px;
+}
+.sku_header .price .no_sel p {
+  font-size: 30px; /*px*/
+  color: red;
 }
 .sku_header .price .no_sel em,
-.sku_header .price .no_sel span{
-    display: block;
-    font-size: 28px;/*px*/
+.sku_header .price .no_sel span {
+  display: block;
+  font-size: 28px; /*px*/
 }
-.sku_header .price .has_sel ul{
-    display: flex;
-    justify-content: space-between;
+.sku_header .price .has_sel ul {
+  display: flex;
+  justify-content: space-between;
 }
-.sku_header .price .has_sel ul li{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.sku_header .price .has_sel ul li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.slide .sku_con{
-    padding: 0 20px;
-    margin-top: 30px;
-    margin-bottom: 40px;
+.slide .sku_con {
+  padding: 0 20px;
+  margin-top: 30px;
+  margin-bottom: 40px;
 }
-.slide .sku_con p{
-    font-size: 30px;/*px*/
-    margin-bottom: 20px;
+.slide .sku_con p {
+  font-size: 30px; /*px*/
+  margin-bottom: 20px;
 }
-.slide .sku_con div{
-    display: flex;
-    flex-wrap: wrap;
+.slide .sku_con div {
+  display: flex;
+  flex-wrap: wrap;
 }
-.slide .sku_con div label{
-    display: block;
-    width: 150px;
-    height: 50px;
-    line-height: 50px;
-    text-align: center;
-    margin-left: 30px;
-    font-size: 28px;/*px*/
-    border: 2px solid #eee;
+.slide .sku_con div label {
+  display: block;
+  width: 150px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  margin-left: 30px;
+  font-size: 28px; /*px*/
+  border: 2px solid #eee;
 }
-.slide .sku_con div label.active{
-    background:red;
-    color: #fff;
+.slide .sku_con div label.active {
+  background: red;
+  color: #fff;
 }
-.slide .num{
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    border-top: 2px solid #eee;
-    border-bottom: 2px solid #eee;
+.slide .num {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  border-top: 2px solid #eee;
+  border-bottom: 2px solid #eee;
 }
-.slide .num p{
-    font-size: 30px;/*px*/
+.slide .num p {
+  font-size: 30px; /*px*/
 }
-.slide .num div{
-    display: flex;
-    justify-content: center;
-    border: 2px solid #eee;
+.slide .num div {
+  display: flex;
+  justify-content: center;
+  border: 2px solid #eee;
 }
-.slide .num em{
-    width: 70px;
-    display: block;
-    font-size: 30px;/*px*/
-    text-align: center;
+.slide .num em {
+  width: 70px;
+  display: block;
+  font-size: 30px; /*px*/
+  text-align: center;
 }
-.slide .num input{
-    width: 100px;
-    border: none;
-    border-left: 2px solid #eee;
-    border-right: 2px solid #eee;
-    text-align: center;
-    font-size: 28px;/*px*/
+.slide .num input {
+  width: 100px;
+  border: none;
+  border-left: 2px solid #eee;
+  border-right: 2px solid #eee;
+  text-align: center;
+  font-size: 28px; /*px*/
 }
-.slide .btn{
-    width: 300px;
-    height: 70px;
-    line-height: 70px;
-    border-radius: 20px;
-    text-align: center;
-    background: red;
-    color: #fff;
-    font-size: 30px;/*px*/
-    margin:30px auto;
+.slide .btn {
+  width: 300px;
+  height: 70px;
+  line-height: 70px;
+  border-radius: 20px;
+  text-align: center;
+  background: red;
+  color: #fff;
+  font-size: 30px; /*px*/
+  margin: 30px auto;
 }
-.slide .none{
-    background: #eee;
+.slide .none {
+  background: #eee;
 }
 </style>
 

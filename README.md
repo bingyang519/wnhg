@@ -1,7 +1,7 @@
 # wnhgdemo
 
 > A Vue.js project
-###用户名 15757135989 密码 123456
+### 用户名 15757135989 密码 123456
 
 ## Build Setup
 
