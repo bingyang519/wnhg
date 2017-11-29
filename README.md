@@ -3,7 +3,7 @@
 > A Vue.js project
 
 ## 技术栈
-vue + vue-router + axios + flexible
+vue + vue-cli + vue-router + axios + flexible + ES6
 
 ## vue插件
 vue-awesome-swiper + vue-lazyload + vue-infinite-scroll + px2rem
@@ -20,15 +20,19 @@ vue-awesome-swiper + vue-lazyload + vue-infinite-scroll + px2rem
 
 ## 部分页面展示
 **首页**
+
 ![首页](https://note.youdao.com/yws/public/resource/93b8f6e3a27832bda88d165802311d38/xmlnote/940F4F06F434478492B5F7D65BD5BBCA/2090)
 
 **详情页**
+
 ![详情页](https://note.youdao.com/yws/public/resource/93b8f6e3a27832bda88d165802311d38/xmlnote/55984CEF1C104101A15273C88E44DAB9/2087)
 
 **一级分类页**
+
 ![一级分类页](https://note.youdao.com/yws/public/resource/93b8f6e3a27832bda88d165802311d38/xmlnote/9106D6A3A7014B3BB0E5FC3162104F51/2089)
 
 **分类商品展示页**
+
 ![分类商品展示页](https://note.youdao.com/yws/public/resource/93b8f6e3a27832bda88d165802311d38/xmlnote/818581B112634F71AB25AE7A91251F13/2093)
  
 ## Build Setup
