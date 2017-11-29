@@ -114,6 +114,7 @@ export default {
 .goods {
   background: #fff;
   margin-top: 20px;
+  margin-bottom: 100px;
 }
 .goods h6 {
   font-size: 28px; /*px*/

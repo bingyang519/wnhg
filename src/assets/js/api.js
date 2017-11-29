@@ -43,6 +43,8 @@ const API = {
 
     // 个人中心相关
     tradeCount : pxy + '/ord/myTradeCount.shtml',
+    getNotice : pxy + '/active/getNotice.shtml',
+
 
     // 确认订单相关
     createOrder : pxy + 'trade/createOrder.shtml',

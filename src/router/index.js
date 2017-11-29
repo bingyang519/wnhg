@@ -7,6 +7,7 @@ import me from '@/pages/me'
 import surePay from '@/pages/surePay'
 import classify from '@/pages/classify'
 import goodsList from '@/pages/goodsList'
+import order from '@/pages/order'
 
 
 Vue.use(Router)
@@ -37,11 +38,17 @@ export default new Router({
   },{
     path:'/me',
     name:'me',
-    component:me
+    component:me,
+    meta:{
+        isLoginLimit:true
+    }
   },{
       path:'/surePay',
       name:'surePay',
-      component:surePay
+      component:surePay,
+      meta:{
+          isLoginLimit:true
+      }
   },{
       path:'/classify',
       name:'classify',
@@ -57,6 +64,14 @@ export default new Router({
       meta:{
           keepAlive:true,
           isKeepAlive:false,
+      }
+  },{
+      path:'/order',
+      name:'order',
+      component:order,
+      meta:{
+          keepAlive:false,
+          isLoginLimit:true
       }
   }],
   scrollBehavior (to, from, savedPosition) {

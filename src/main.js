@@ -12,7 +12,6 @@ import infiniteScroll from 'vue-infinite-scroll'
 
 Vue.prototype.$http = axios;
 Vue.prototype.API = API;
-Vue.prototype.isLogin = false;
 
 
 
@@ -26,6 +25,22 @@ Vue.use(VueLazyload, {
 });
 
 Vue.config.productionTip = false
+
+router.beforeEach((to, from, next) => {
+    if(to.meta.isLoginLimit){  // 需要登录
+        axios.post(API.checkUser)
+        .then((res)=>{
+            if(res.data.success){
+                next()
+            }else{
+                next({name:'login'})
+            }
+        })
+    }else{
+        next()
+    }
+    
+})
 
 /* eslint-disable no-new */
 new Vue({

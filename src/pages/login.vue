@@ -2,18 +2,20 @@
   <div class="login">
       <top text='登陆'></top>
       <div class="text">
-          账号：<input type="text" v-model="mobile">
+          <span>账号：</span>
+          <input type="text" v-model="mobile">
+          <button @click="setName">自动填入账号</button>
       </div>
       <div class="pwd">
-          密码：<input type="password" v-model="paddword">
+          <span>密码：</span>
+          <input type="password" v-model="paddword">
+          <button @click="setPwd">自动填入密码</button>
       </div>
       <div class="err">{{err}}</div>
       <div class="btn">
-        <button>填入账号</button>
-        <button>填入密码</button>
       </div>
-      <button @click.prevent="login">登陆</button>
-      <div>用户名 15757135989 密码 123456</div>
+      <button @click.prevent="login" class="button">登陆</button>
+      <div class="namePwd">用户名 15757135989 密码 123456</div>
   </div>
 </template>
 <script>
@@ -55,28 +57,70 @@ export default {
                 console.log(err,222)
             })
         },
+        setName(){
+            this.mobile=15757135989
+        },
+        setPwd(){
+            this.paddword='123456'
+        }
     }
 }
 </script>
 
 <style scoped>
 .login{
-    margin-top: 200px;
-    margin-left: 100px;
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    padding: 200px 0;
+} 
+.login .text,
+.login .pwd{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login .text span,
+.login .pwd span{
+    font-size: 28px;/*px*/
+}
+.login .text input,
+.login .pwd input{
+    font-size: 28px;/*px*/
+    width: 300px;
+    height: 60px;
+    background: #fff;
+    padding-left: 20px;
+    border: 1px solid #eee;/*no*/
+}
+.login .text button,
+.login .pwd button{
+    font-size: 24px;/*px*/
+    background: #eee;
+    border: 1px solid #eee;/*no*/
+    margin-left: 20px;
+    padding: 10px;
+    border-radius: 10px;
 }
 .login .pwd{
-    margin-top: 20px;
+    margin-top: 40px;
 }
-.login button{
-    width: 100px;
-    height: 50px;
-    margin-top: 50px;
-    margin-left: 150px;
+.login .button{
+    width: 300px;
+    height: 80px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 150px;
+    font-size: 30px;/*px*/
 }
 .err{
     color: red;
-    margin-top: 10px;
-    margin-left: 10px;
+    margin-top: 50px;
+    text-align: center;
+}
+.namePwd{
+    margin-top: 50px;
+    text-align: center;
 }
 </style>
 
