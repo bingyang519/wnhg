@@ -1,13 +1,22 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/pages/index'
-import goodsDetails from '@/pages/goodsDetails'
-import login from '@/pages/login'
-import me from '@/pages/me'
-import surePay from '@/pages/surePay'
-import classify from '@/pages/classify'
-import goodsList from '@/pages/goodsList'
-import order from '@/pages/order'
+// import Index from '@/pages/index'
+// import goodsDetails from '@/pages/goodsDetails'
+// import login from '@/pages/login'
+// import me from '@/pages/me'
+// import surePay from '@/pages/surePay'
+// import classify from '@/pages/classify'
+// import goodsList from '@/pages/goodsList'
+// import order from '@/pages/order'
+
+const Index = () => import('@/pages/index')
+const goodsDetails = () => import('@/pages/goodsDetails')
+const login = () => import('@/pages/login')
+const me = () => import('@/pages/me')
+const surePay = () => import('@/pages/surePay')
+const classify = () => import('@/pages/classify')
+const goodsList = () => import('@/pages/goodsList')
+const order = () => import('@/pages/order')
 
 
 Vue.use(Router)

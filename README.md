@@ -34,7 +34,25 @@ vue-awesome-swiper + vue-lazyload + vue-infinite-scroll + px2rem
 **分类商品展示页**
 
 ![分类商品展示页](https://note.youdao.com/yws/public/resource/93b8f6e3a27832bda88d165802311d38/xmlnote/818581B112634F71AB25AE7A91251F13/2093)
- 
+
+## 运行说明
+
+- 如果只是查看生产环境的页面效果，npm install 下载依赖后，直接npm run dev 即可自动打开浏览器查看。
+```
+// config/index.js中设置了代理来解决跨域问题--请知晓
+proxyTable: {
+      '/api':{
+        target:'http://www.weinihaigou.com',
+        changeOrigin:true,
+        pathRewrite:{
+          '^/api':''
+        }
+      }
+    },
+```
+- 如果想查看打包后的发布环境的页面效果，因项目使用了代理来解决跨域问题，所以需把```src/assets/js/api.js```中的```const pxy='/api'```，改为```const pxy = ''```即可。
+- 关于如何本地查看发布环境代码的页面效果，请移步这篇文章[利用http-server测试vue-cli打包后的项目](https://segmentfault.com/a/1190000012249873)
+
 ## Build Setup
 
 ``` bash

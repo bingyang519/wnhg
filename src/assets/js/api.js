@@ -1,4 +1,7 @@
-const pxy = '/api';
+const pxy = '/api';   // 开发时使用
+
+//npm run build 打包时，要把pxy设为空，此处的'/api'只是为跨域用
+ //const pxy = '';    // 打包时使用
 const API = {
     // 登录权限相关
     login : pxy + '/user/login.shtml',
